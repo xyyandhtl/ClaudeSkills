@@ -1,0 +1,37 @@
+# ClaudeSkills
+
+Personal Claude Code skills collection. Each subdirectory is a standalone skill that can be installed individually.
+
+## Available Skills
+
+| Skill | Description |
+|-------|-------------|
+| [dev-debugger](./dev-debugger/) | Structured debugging workflow: investigate → fix → confirm → document to Feishu |
+
+## Install a Skill
+
+```bash
+# Install a single skill into Claude Code
+claude skills add <skill-name> --source /path/to/ClaudeSkills/<skill-name>
+
+# Or symlink directly
+ln -s /path/to/ClaudeSkills/<skill-name> ~/.claude/skills/<skill-name>
+```
+
+## Adding a New Skill
+
+Each skill lives in its own directory with this minimal structure:
+
+```
+my-new-skill/
+├── SKILL.md              # Required: YAML frontmatter (name, description) + instructions
+├── scripts/              # Optional: executable scripts for repetitive tasks
+├── references/           # Optional: reference docs loaded on demand
+└── assets/               # Optional: templates, images, etc.
+```
+
+1. Create a new directory under the repo root
+2. Write `SKILL.md` with proper frontmatter
+3. Commit and push
+
+See [Claude Code skill documentation](https://docs.anthropic.com/en/docs/claude-code/skills) for the full SKILL.md specification.

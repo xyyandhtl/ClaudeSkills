@@ -1,0 +1,15 @@
+# OS junk
+.DS_Store
+Thumbs.db
+
+# Editor
+*.swp
+*.swo
+*~
+
+# Python cache
+__pycache__/
+*.pyc
+
+# Skill workspace (generated during testing)
+*-workspace/
