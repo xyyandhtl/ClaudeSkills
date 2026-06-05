@@ -1,0 +1,17 @@
+{
+  "skill_name": "integrate-algorithm",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "帮我把 ~/Opensources/simple-depth 这个目录下的深度估计代码集成到当前项目里。代码很简单：一个 model.py 里有个 DepthModel 类加载 checkpoint，一个 inference.py 里有个 run_inference(image) 函数输出深度图。checkpoint 在 data/checkpoints/depth.pth。当前项目是 Python 框架，用 Module 类的 In/Out 流模式。",
+      "expected_output": "创建一个新的 Module 子类，正确导入外部代码，修复相对导入，本地加载 checkpoint，通过 In[Image]/Out[Image] 流发布结果，有 __init__.py 和测试文件",
+      "files": []
+    },
+    {
+      "id": 2,
+      "prompt": "我有个外部的人脸检测模型在 ~/external/face_det 目录，用 PyTorch 写的，有自己的 sys.path hack 和绝对导入。帮我集成到当前框架项目里：1) 移除所有 sys.path hack 改为相对导入 2) 封成一个 Module 3) 写单元测试 4) 确保模型从本地 checkpoint 加载不联网",
+      "expected_output": "移除所有 sys.path 语句，修复为相对导入，创建 Module 子类封装推理逻辑，添加 local_files_only 或等效本地加载，包含 test 文件",
+      "files": []
+    }
+  ]
+}

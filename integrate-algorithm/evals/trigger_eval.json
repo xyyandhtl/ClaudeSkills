@@ -1,0 +1,82 @@
+[
+  {
+    "query": "帮我把YOLOv8的目标检测模型集成进当前项目里，我要在机器人上实时跑推理",
+    "should_trigger": true
+  },
+  {
+    "query": "我有个开源视觉导航代码在 ~/Opensources/nav 下，帮我接入当前项目框架形成一个新的模块",
+    "should_trigger": true
+  },
+  {
+    "query": "我需要把SAM2分割模型集成进来，流程是先加载本地checkpoint、接收图像topic、发布mask结果",
+    "should_trigger": true
+  },
+  {
+    "query": "integrate this depth estimation repo from GitHub into our perception pipeline, it should output point clouds",
+    "should_trigger": true
+  },
+  {
+    "query": "这个外部的人体姿态估计算法怎么集成进去？模型文件在 ~/Downloads/pose_est 里，没有网络",
+    "should_trigger": true
+  },
+  {
+    "query": "接入whisper语音识别到框架里，用audio_in流接收数据，转写结果发给agent",
+    "should_trigger": true
+  },
+  {
+    "query": "帮我看看怎么把外部点云配准算法放到现有建图模块旁边，做成新模块",
+    "should_trigger": true
+  },
+  {
+    "query": "我现在要集成一个新的人脸识别模型替换现有的旧模型，外部代码已经放在 data/models/face 下面了",
+    "should_trigger": true
+  },
+  {
+    "query": "import this SLAM library into the robot navigation stack, it needs to hook into camera and odom streams",
+    "should_trigger": true
+  },
+  {
+    "query": "帮我从这个第三方的环境感知代码提取核心推理逻辑，封装成项目里的模块，并写单元测试",
+    "should_trigger": true
+  },
+  {
+    "query": "给项目加个redis做结果缓存层吧，简单点就行用docker拉个镜像",
+    "should_trigger": false
+  },
+  {
+    "query": "pip install torch torchvision opencv-python 帮我看看这几个版本互相兼容不",
+    "should_trigger": false
+  },
+  {
+    "query": "帮我在现有图像处理模块里加一个灰度转换功能，不涉及外部代码",
+    "should_trigger": false
+  },
+  {
+    "query": "这个双线性插值函数太慢了，帮我优化一下算法复杂度",
+    "should_trigger": false
+  },
+  {
+    "query": "帮我在项目里引入ESLint和Prettier做前端代码格式化",
+    "should_trigger": false
+  },
+  {
+    "query": "帮我写个README文档，介绍这个视觉导航算法的原理和使用方式",
+    "should_trigger": false
+  },
+  {
+    "query": "把训练好的模型checkpoint部署到Jetson Orin上做边缘推理",
+    "should_trigger": false
+  },
+  {
+    "query": "对比一下YOLOv8和RT-DETR哪个更适合我们当前项目的需求",
+    "should_trigger": false
+  },
+  {
+    "query": "帮我修一下这个bug，模型推理时输出的shape不对，应该是4维但出来3维",
+    "should_trigger": false
+  },
+  {
+    "query": "把项目里所有用绝对路径import的地方改成相对导入，整理一下代码风格",
+    "should_trigger": false
+  }
+]
