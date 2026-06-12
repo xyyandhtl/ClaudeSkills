@@ -113,9 +113,9 @@ Rules for the summary:
 
 After the markdown file is written and the user confirms:
 
-#### Step 1: Find the target folder
+#### Case A: Create a new document
 
-Search for the user's project folder in Feishu:
+**Step A1: Find the target folder**
 
 ```bash
 lark-cli drive +search --as user --query "<folder-name>" --doc-types folder --only-title
@@ -129,9 +129,7 @@ lark-cli drive files list --params '{}' --format json
 
 Present matching folders to the user and let them choose.
 
-#### Step 2: Create the document
-
-Use the relative path from the project root:
+**Step A2: Create the document**
 
 ```bash
 lark-cli docs +create --api-version v2 --doc-format markdown \
@@ -139,11 +137,9 @@ lark-cli docs +create --api-version v2 --doc-format markdown \
   --content @<relative-path-to-summary.md>
 ```
 
-**IMPORTANT**: `--content @file` requires a **relative path** from the current working directory. Do NOT use absolute paths.
+**IMPORTANT**: `--content @file` requires a **relative path** from the current working directory.
 
-#### Step 3: Report
-
-Tell the user the document URL and confirm it's in the right folder:
+**Step A3: Report**
 
 ```
 文档已导出:
@@ -151,3 +147,45 @@ Tell the user the document URL and confirm it's in the right folder:
 - 位置: <folder-name>
 - 链接: <url>
 ```
+
+#### Case B: Update an existing document
+
+When the user provides a Feishu doc URL/token, you MUST merge the new content with the existing document — NOT append to the end, NOT blindly overwrite.
+
+**Step B1: Fetch existing content**
+
+```bash
+lark-cli docs +fetch --doc <url-or-token>
+```
+
+Parse the returned markdown to understand the existing structure: title, sections, phases, tables, etc.
+
+**Step B2: Merge the summaries**
+
+Write a *new* merged file (e.g. `docs/MERGED_SUMMARY.md`) that fuses the old and new content into one cohesive document:
+
+- **Title**: Broaden to cover both sessions' work.
+- **概述**: Combine the scope descriptions. Update the core module table with any new modules.
+- **开发过程**: Merge all phases from both sessions into a single chronological sequence. Re-number them. If a module appears in both old and new (e.g. "Web 前端"), group its phases together rather than scattering them.
+- **设计说明**: Consolidate: if both have data flow diagrams, merge into one; merge config parameter tables.
+- **当前状态**: Use the LATEST state (overwrite the old status). Update "已知情况" — remove items already solved, add new ones.
+- **文件清单**: Merge into one table, removing duplicate file entries. If the same file appeared in both sessions, consolidate into one row summarizing all changes.
+
+**Key rules for merging**:
+- Never just append — the result reads as a single session's work, not two reports glued together.
+- The merged doc should make sense to a cold reader who doesn't know it was written in two sessions.
+- Preserve detail that is still relevant; drop or condense things that have been superseded.
+
+**Step B3: Overwrite with merged content**
+
+```bash
+lark-cli docs +update --doc <url-or-token> --mode overwrite \
+  --markdown @docs/MERGED_SUMMARY.md
+```
+
+Using `overwrite` after careful merging is correct here — you've already incorporated the old content, so nothing is lost.
+
+**DO NOT do these**:
+- ❌ `--mode append` — tacks content at the end, creating a disjointed duplicate structure.
+- ❌ `--mode overwrite` without first fetching — destroys previous content.
+- ❌ Skip fetching and just create a second document — fragments the project's documentation.
