@@ -11,58 +11,48 @@ description: >
 
 # Monthly Report (工作月报)
 
-Interactive workflow: interview → draft → export. Thorough interview + careful draft review = one-pass export. Produces a concise, leadership-facing Feishu document.
+Interview → research → draft → export. The model reads the user's code repos and dev docs to understand each task, then fills in the template. Produces a concise, leadership-facing Feishu document.
 
 ## Core Principles
 
 - **Leadership-facing.** Highlight results, business value, and system-level thinking, not implementation details.
 - **Structured and scannable.** Tables for achievements, bullet lists for plans. One screenful per task.
-- **All input from user.** Do NOT auto-extract from git log, CLAUDE.md, or other sources.
+- **Model does the research.** User provides pointers (repo, doc, video); model reads and extracts what it needs.
 
 ## Workflow
 
-### Phase 1: Interview
+### Phase 1: Gather Pointers
 
-Ask the user questions in this order. For each, show a brief example of a good answer.
+Ask the user for the reporting period and, for each task, the key resources to research.
 
-**Step 1: Metadata**
+**Step 1: Period**
 
 ```
 月报覆盖哪个时间段？（如：2026年6月）
 ```
 
-**Step 2: Task overview**
+**Step 2: Per task, ask for these three things**
+
+逐个任务询问：
 
 ```
-几个任务？每个给个简短标签 + 一句话状态（如"核心链路已跑通""初步打通""已结项"）。
+任务 N：
+- 代码仓库地址（GitHub/GitLab URL，如有特定分支请注明）
+- 开发记录文档（飞书 docx URL）
+- 演示/调试视频（本地文件路径，可多个）
 ```
 
-**Step 3: Per task, collect these fields**
+Ask the user for any additional context they want to add (task framing, strategic background, special status like "已结项"). But the model should extract the detailed content by reading the provided resources.
 
-| # | Field | Notes |
-|---|-------|-------|
-| 1 | **任务标题** | e.g. "割草机移动抓取仿真平台搭建" |
-| 2 | **背景与目标** | 1 paragraph. Why this task exists — team needs, existing demo it builds on, strategic context. |
-| 3 | **代码仓库** | GitHub/GitLab URL, include branch if on feature branch |
-| 4 | **开发记录** | Feishu docx URL of the detailed dev log |
-| 5 | **核心产出** | 1 sentence: main modules/components delivered |
-| 6 | **E2E 验证** *(optional)* | Performance metrics, test results |
-| 7 | **集成状态** *(optional)* | Which sub-links are verified |
-| 8 | **演示视频** | Local file paths (will be uploaded and embedded as cards) |
-| 9 | **后续计划** | 2-4 bullets. System-level capability gaps, NOT implementation todos. Help the user reframe if they give code-level items — ask "这个要解决的系统级问题是什么？" |
-| 10 | **任务状态** | Ongoing → `### 后续计划`. Concluded → `### 结论` with reason + what was gained. |
+### Phase 2: Research & Draft
 
-**Terminology defaults (apply proactively, don't ask):**
+For each task, read the provided resources to understand what was done:
 
-| User says | Use instead |
-|-----------|-------------|
-| "纯算法方案" | 板端轻量方案 |
-| "待解决" / "计划" / "TODO" | 后续计划 |
-| 代码变更量/commit数/LOC | Omit entirely, or weave into 核心产出 |
+1. **Code repo**: Read CLAUDE.md, README, and key source files to understand the module structure, architecture, and capabilities.
+2. **Dev doc**: Fetch the Feishu docx (`lark-cli docs +fetch --api-version v2 --doc-format markdown`) to understand the development process, design decisions, and current status.
+3. **Videos**: Note file paths for later upload; optionally skim to understand the demo content.
 
-### Phase 2: Draft
-
-Fill in this template with the collected info. Present for review. Do not export until confirmed.
+From this research, extract: task title, background & goals, core deliverables, E2E results, integration status, and system-level plans. Fill in the template below.
 
 ---
 
@@ -82,25 +72,25 @@ Fill in this template with the collected info. Present for review. Do not export
 
 ### 背景与目标
 
-<1 paragraph>
+<1 paragraph — business context, team needs, strategic motivation>
 
 ### 成果
 
 | 维度 | 内容 |
 |------|------|
 | 代码仓库 | [<repo-name>](<URL>) |
-| 核心产出 | <1 sentence> |
-<!-- 可选行：E2E 验证、集成状态，有则加 -->
+| 核心产出 | <1 sentence — main modules/components delivered> |
 | 开发记录 | [<Doc Title>](<Feishu URL>) |
 | 演示视频 | 见下方 |
 
-<!-- 视频卡片在导出阶段用 docs +media-insert 嵌入，此处留文字占位即可 -->
+<!-- 成果表格可额外补充：E2E 验证、集成状态等行 -->
 
 ### <结论 或 后续计划>
 
-<!-- 已结项：结论段落；进行中：bullet list -->
+<!-- 已结项任务用"结论"，进行中用"后续计划" -->
+<!-- 后续计划用 bullet list，每条 = **加粗关键词** + 破折号 + 一句话，站在系统完整性和需求高度 -->
+
 - **<系统能力缺口>** — <为什么重要、对整体系统的意义>
-- ...
 
 ---
 
@@ -110,70 +100,33 @@ Fill in this template with the collected info. Present for review. Do not export
 
 ---
 
-**Rules embedded in the template:**
-- 成果表格：`维度 | 内容` 两列。**不含"代码变更量"行。**
-- 后续计划：bullet list，非表格。站在系统完整性和需求高度，每条 = **加粗关键词** + 破折号 + 一句话。
-- **无"总结与展望"章节。** 每个任务已有自己的后续计划。
-- 视频：草稿中写"见下方"占位，导出时用 `docs +media-insert --type file --file-view card` 嵌入。
-- 语言精简，去掉开发过程、调试故事、迭代记录，只引开发文档链接。
+**Template encodes these rules — no additional notes needed:**
+- 成果表格两列 `维度 | 内容`。不含"代码变更量"行，不纯算法→板端轻量。
+- 后续计划是 bullet list 不是表。无"总结与展望"章节。
+- 视频在草稿中写"见下方"占位，导出时用卡片嵌入。
+- 语言精简，去掉开发过程和调试故事，只引开发文档链接。
+
+Present the draft for review. Do not export until confirmed.
 
 ### Phase 3: Export
 
-Only after user confirms the draft.
+Only after user confirms.
 
-**Prerequisites:** Read `../lark-shared/SKILL.md` and `lark-doc` create/update references first. lark-cli must be available.
+**Prerequisites:** Read `../lark-shared/SKILL.md` and `lark-doc` create/update references. lark-cli must be available.
 
-**Step 1: Locate reports folder**
 ```bash
+# 1. Find reports folder
 lark-cli drive +search --as user --query "reports" --doc-types folder --only-title
-```
 
-**Step 2: Create document** (draft file must be relative path; flag is `--parent-token`, NOT `--folder-token`)
-```bash
+# 2. Create document (--parent-token, NOT --folder-token; draft must be relative path)
 lark-cli docs +create --api-version v2 --doc-format markdown \
   --parent-token <folder-token> --content @./monthly_report_draft.md
-```
 
-**Step 3: Upload and embed videos** (per video, in task order)
-```bash
+# 3. Upload and embed each video (in task order)
 lark-cli drive +upload --file <relative-path> --parent-token <folder-token>
 lark-cli docs +media-insert --type file --file-view card \
   --doc "<doc-url>" --file-token <token>
+
+# 4. Verify
+lark-cli docs +fetch --api-version v2 --doc "<doc-url>" --doc-format markdown
 ```
-
-**Step 4: Verify and report** — fetch doc, confirm structure, tell user URL and folder.
-
----
-
-## Edits After Export
-
-For occasional post-export tweaks. Use `lark-cli docs +update --api-version v2`.
-
-**Critical distinction:** XML-mode `str_replace` is block-scoped — can't match across `<tr>`, `<td>`, `<p>`. For table rows or multi-block content, always use `--doc-format markdown` and fetch in markdown first to see exact match text.
-
-| Edit | Mode | Example |
-|------|------|---------|
-| Inline text | XML (default) | Fix a typo |
-| Table row / multi-block | `--doc-format markdown` | Delete row, replace section |
-
-**Delete a table row:**
-```bash
-lark-cli docs +update --api-version v2 --doc "<url>" --command str_replace \
-  --doc-format markdown --pattern "| 维度 | 内容 |" --content ""
-```
-After deletion, check if a blank line split the table — if so, merge by replacing `|\n\n|` → `|\n|`.
-
-**Replace a section:** Write old/new content to temp files, use `$(cat file)` to avoid shell escaping.
-
-**Ambiguous matches:** Include surrounding context in the pattern to make it unique.
-
-## Common Pitfalls
-
-1. `--folder-token` for doc creation → use `--parent-token`.
-2. Absolute paths with lark-cli → use relative paths (`@./file.md`).
-3. XML mode for table edits → always use `--doc-format markdown`.
-4. Text links for videos → always use `docs +media-insert --type file --file-view card`.
-5. "代码变更量" row → never include; weave stats into 核心产出 if needed.
-6. "待解决" / "计划" as heading → use `### 后续计划`.
-7. "总结与展望" section → don't write one.
-8. "纯算法方案" → 板端轻量方案.
