@@ -10,6 +10,7 @@ Personal Claude Code skills collection. Each subdirectory is a standalone skill 
 | [integrate-algorithm](./integrate-algorithm/) | Integrate external algorithms/libraries/models into a framework project: study → map → fix imports → test → debug → tune → document |
 | [monthly-report](./monthly-report/) | Interactive workflow for writing structured monthly/periodic work reports and exporting to Feishu |
 | [session-to-doc](./session-to-doc/) | Export a coding session's work to a structured Feishu document. Reusable by other skills as a final documentation step. |
+| [closed-loop-dev-migration](./closed-loop-dev-migration/) | Migrate the closed-loop development methodology to a new project: analysis → adaptation → pilot → validation |
 
 ## Install a Skill
 
